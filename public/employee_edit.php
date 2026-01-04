@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once "../database.php";
 require_once "../models/Employee.php";
 require_once "../models/EmployeeRepository.php";
@@ -64,38 +68,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <title>Editar empleado</title>
-        <link rel="stylesheet" href="css/estilos.css">
-    </head>
-    <body>
 
-<h2>Editar empleado</h2>
-<form method="post">
-    <label>Nombre: </label><br>
-    <input type="text" name="nombre" value="<?= $employee['nombre'] ?>" required><br>
+<head>
+    <meta charset="UTF-8">
+    <title>Editar empleado</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
 
-    <label>Puesto:</label><br>
-    <input type="text" name="puesto" 
-    value="<?php echo $employee['puesto']; ?>" 
-    required><br><br>
+<body>
 
-    <label>salario: </label><br>
-    <input type="number" name="salario" value="<?= $employee['salario'] ?>" required><br>
+    <h2>Editar empleado</h2>
+    <form method="post">
+        <label>Nombre: </label><br>
+        <input type="text" name="nombre" value="<?= $employee['nombre'] ?>" required><br>
 
-    <label>Departamento: </label><br>
-    <select name="id_departamento" required>
-        <?php foreach ($departments as $d): ?>
-            <option value="<?= $d['id_departamento'] ?>"
-                <?= $d['id_departamento'] == $employee['id_departamento'] ? 'selected' : '' ?>>
-                <?= $d['nombre'] ?>
-        </option>
-        <?php endforeach; ?>
-    </select><br><br>
+        <label>Puesto:</label><br>
+        <input type="text" name="puesto"
+            value="<?php echo $employee['puesto']; ?>"
+            required><br><br>
 
-    <button type="submit">Guardar cambios</button>
-</form>
+        <label>salario: </label><br>
+        <input type="number" name="salario" value="<?= $employee['salario'] ?>" required><br>
 
-        </body>
-        </html>
+        <label>Departamento: </label><br>
+        <select name="id_departamento" required>
+            <?php foreach ($departments as $d): ?>
+                <option value="<?= $d['id_departamento'] ?>"
+                    <?= $d['id_departamento'] == $employee['id_departamento'] ? 'selected' : '' ?>>
+                    <?= $d['nombre'] ?>
+                </option>
+            <?php endforeach; ?>
+        </select><br><br>
+
+        <button type="submit">Guardar cambios</button>
+    </form>
+
+</body>
+
+</html>
