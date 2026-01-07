@@ -5,47 +5,52 @@ require_once "../models/EmployeeRepository.php";
 
 $employeeRepository = new EmployeeRepository($db);
 
-/* obtener ID */
+/* =========================
+   Obtener ID del empleado
+   ========================= */
 $employeeID = $_GET['id'] ?? null;
+
 if (!$employeeID) {
     die("Invalid ID");
 }
 
-/* Traer empleado */
-$sqlEmployee = "
-SELECT
-e.id_empleado,
-e.nombre,
-e.puesto,
-e.salario,
-e.id_departamento
-FROM empleados e
-WHERE e.id_empleado = :id
-";
+/* =========================
+   Traer empleado por ID
+   ========================= */
+$employees = $employeeRepository->findAll();
 
-
-$employee = $employeeRepository->findById($employeeID);
+$employee = null;
+foreach ($employees as $e) {
+    if ($e['id_empleado'] == $employeeID) {
+        $employee = $e;
+        break;
+    }
+}
 
 if (!$employee) {
     die("Employee not found");
 }
 
-/* Traer deptos */
+/* =========================
+   Traer departamentos
+   ========================= */
 $sqlDepartment = "SELECT id_departamento, nombre FROM departamento";
 $stmt = $db->prepare($sqlDepartment);
 $stmt->execute();
 $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* Guardar cambios */
+/* =========================
+   Guardar cambios
+   ========================= */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $sqlUpdate = "
-    UPDATE empleados SET
-    nombre = :nombre,
-    puesto = :puesto,
-    salario = :salario,
-    id_departamento = :id_departamento
-    WHERE id_empleado = :id
+        UPDATE empleados SET
+            nombre = :nombre,
+            puesto = :puesto,
+            salario = :salario,
+            id_departamento = :id_departamento
+        WHERE id_empleado = :id
     ";
 
     $stmt = $db->prepare($sqlUpdate);
@@ -64,38 +69,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <title>Editar empleado</title>
-        <link rel="stylesheet" href="css/estilos.css">
-    </head>
-    <body>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit employee</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
 
-<h2>Editar empleado</h2>
+<h2>Edit employee</h2>
+
 <form method="post">
-    <label>Nombre: </label><br>
-    <input type="text" name="nombre" value="<?= $employee['nombre'] ?>" required><br>
 
-    <label>Puesto:</label><br>
-    <input type="text" name="puesto" 
-    value="<?php echo $employee['puesto']; ?>" 
-    required><br><br>
+    <label>Name:</label><br>
+    <input type="text" name="nombre" value="<?= htmlspecialchars($employee['nombre']) ?>" required><br><br>
 
-    <label>salario: </label><br>
-    <input type="number" name="salario" value="<?= $employee['salario'] ?>" required><br>
+    <label>Position:</label><br>
+    <input type="text" name="puesto" value="<?= htmlspecialchars($employee['puesto']) ?>" required><br><br>
 
-    <label>Departamento: </label><br>
+    <label>Salary:</label><br>
+    <input type="number" step="0.01" name="salario" value="<?= $employee['salario'] ?>" required><br><br>
+
+    <label>Department:</label><br>
     <select name="id_departamento" required>
         <?php foreach ($departments as $d): ?>
             <option value="<?= $d['id_departamento'] ?>"
-                <?= $d['id_departamento'] == $employee['id_departamento'] ? 'selected' : '' ?>>
+                <?= isset($employee['id_departamento'])
+                && $d['id_departamento'] == $employee['id_departamento']
+                ? 'selected'
+                : ''?>>
                 <?= $d['nombre'] ?>
-        </option>
+            </option>
         <?php endforeach; ?>
     </select><br><br>
 
-    <button type="submit">Guardar cambios</button>
+    <button type="submit">Save changes</button>
 </form>
 
-        </body>
-        </html>
+</body>
+</html>
