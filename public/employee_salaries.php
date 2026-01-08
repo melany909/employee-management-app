@@ -5,8 +5,8 @@ require_once "../database.php";
 /* Traer empleados + sueldos */
 $sql = "
 SELECT
-    e.nombre,
-    e.puesto,
+    e.nombre AS employee_name,
+    e.puesto AS position,
     s.mes,
     s.año,
     s.monto,
@@ -44,20 +44,16 @@ SELECT
         <th>Payment Date</th>
     </tr>
 
-    <?php foreach ($salaries as $salary): ?>
+    <?php foreach ($salaries as $s): ?>
         <tr>
-            <td><?= htmlspecialchars($salary['nombre']) ?></td>
-            <td><?= htmlspecialchars($salary['puesto']) ?></td>
-            <td><?= $salary['mes'] ?></td>
-            <td><?= $salary['año'] ?></td>
-            <td>$<?= number_format($salary['monto'], 2) ?></td>
-            <td><?= $salary['fecha_pago'] ?></td>
+            <td><?= $s['employee_name'] ?></td>
+            <td><?= $s['position'] ?></td>
+            <td><?= $s['mes'] ?></td>
+            <td><?= $s['año'] ?></td>
+            <td>$<?= $s['monto'] ?></td>
+            <td><?= $s['fecha_pago'] ?></td>
         </tr>
     <?php endforeach; ?>
 </table>
-
-<br>
-<a href="employee_list.php">⬅ Volver a empleados</a>
-
 </body>
 </html>
